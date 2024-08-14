@@ -50,56 +50,56 @@ class VAE(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim):
         super(VAE, self).__init__()
 
-        # # Encoder
-        # self.encoder = nn.Sequential(
-        #     nn.Linear(input_dim, hidden_dim[0]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[0], hidden_dim[1]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[1], latent_dim * 2)
-        # )
-        #
-        # # Decoder
-        # self.decoder = nn.Sequential(
-        #     nn.Linear(latent_dim, hidden_dim[1]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[1], hidden_dim[0]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[0], input_dim),
-        #     nn.Tanh()
-        # )
+        # Encoder
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim[0]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[0], hidden_dim[1]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[1], latent_dim * 2)
+        )
+        
+        # Decoder
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, hidden_dim[1]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[1], hidden_dim[0]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[0], input_dim),
+            nn.Tanh()
+        )
 
         # Encoder
-        self.encoder = MLP(
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
-            # [input_dim, 128, 256, 256, 256, 128, 128, 128, 128, 128, 128, latent_dim * 2],    # 加skips的结构
-            [input_dim, 128, 256, 256, 256, 128, latent_dim * 2],
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
-            # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
-            # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
-            act=nn.LeakyReLU,
-            # dropout=0.1
-        )
+        # self.encoder = MLP(
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
+        #     # [input_dim, 128, 256, 256, 256, 128, 128, 128, 128, 128, 128, latent_dim * 2],    # 加skips的结构
+        #     [input_dim, 128, 256, 256, 256, 128, latent_dim * 2],
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
+        #     # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
+        #     # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
+        #     act=nn.LeakyReLU,
+        #     # dropout=0.1
+        # )
 
-        # Decoder
-        self.decoder = MLP(
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
-            # [latent_dim, 64, 64, 64, 64, 128, 128, 128, 256, 256, 256, input_dim],            # 加skips的结构
-            [latent_dim, 64, 128, 256, 256, 256, input_dim],
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
-            # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
-            # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
-            act=nn.LeakyReLU,
-            # dropout=0.1
-        )
+        # # Decoder
+        # self.decoder = MLP(
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
+        #     # [latent_dim, 64, 64, 64, 64, 128, 128, 128, 256, 256, 256, input_dim],            # 加skips的结构
+        #     [latent_dim, 64, 128, 256, 256, 256, input_dim],
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
+        #     # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
+        #     # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
+        #     act=nn.LeakyReLU,
+        #     # dropout=0.1
+        # )
 
     def reparameterize(self, mu, log_var):
         std = torch.exp(0.5 * log_var)
@@ -133,55 +133,55 @@ class VAE_precoder(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim):
         super(VAE_precoder, self).__init__()
 
-        # # Encoder
-        # self.encoder = nn.Sequential(
-        #     nn.Linear(input_dim, hidden_dim[0]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[0], hidden_dim[1]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[1], latent_dim * 2)
-        # )
-        #
-        # # Decoder
-        # self.decoder = nn.Sequential(
-        #     nn.Linear(latent_dim, hidden_dim[1]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[1], hidden_dim[0]),
-        #     nn.LeakyReLU(),
-        #     # nn.ReLU(),
-        #     nn.Linear(hidden_dim[0], input_dim),
-        #     nn.Tanh()
-        # )
-
-        self.encoder = MLP(
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
-            # [input_dim, 128, 256, 256, 256, 128, 128, 128, 128, 128, 128, latent_dim * 2],    # 加skips的结构
-            [input_dim, 32, 64, 128, 128, 64, latent_dim * 2],
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
-            # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
-            # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
-            act=nn.LeakyReLU,
-            # dropout=0.1
+        # Encoder
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim[0]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[0], hidden_dim[1]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[1], latent_dim * 2)
         )
+        
+        # Decoder
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, hidden_dim[1]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[1], hidden_dim[0]),
+            nn.LeakyReLU(),
+            # nn.ReLU(),
+            nn.Linear(hidden_dim[0], input_dim),
+            nn.Tanh()
+        )
+
+        # self.encoder = MLP(
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
+        #     # [input_dim, 128, 256, 256, 256, 128, 128, 128, 128, 128, 128, latent_dim * 2],    # 加skips的结构
+        #     [input_dim, 32, 64, 128, 128, 64, latent_dim * 2],
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
+        #     # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
+        #     # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
+        #     act=nn.LeakyReLU,
+        #     # dropout=0.1
+        # )
 
         # Decoder
-        self.decoder = MLP(
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
-            # [latent_dim, 64, 64, 64, 64, 128, 128, 128, 256, 256, 256, input_dim],            # 加skips的结构
-            [latent_dim, 32, 64, 128, 128, 64, input_dim],
-            # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
-            # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
-            # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
-            # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
-            act=nn.LeakyReLU,
-            # dropout=0.1
-        )
+        # self.decoder = MLP(
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, 2048, 2048, out_dim],
+        #     # [latent_dim, 64, 64, 64, 64, 128, 128, 128, 256, 256, 256, input_dim],            # 加skips的结构
+        #     [latent_dim, 32, 64, 128, 128, 64, input_dim],
+        #     # [input_dim, 32, 32, 64, 64, 128, 128, 256, 256, 512, 512, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 1024, 2048, 2048, out_dim],
+        #     # [input_dim, 4, 8, 16, 32, 64, 128, 512, 1024, 2048, 4096, out_dim],
+        #     # skips={4: 2, 7: 5, 10: 8},  # 一个类似于树的用法，查表
+        #     # skips={3: 1, 5: 3, 7: 5, 9: 7},  # 一个类似于树的用法，查表
+        #     act=nn.LeakyReLU,
+        #     # dropout=0.1
+        # )
 
     def reparameterize(self, mu, log_var):
         std = torch.exp(0.5 * log_var)
